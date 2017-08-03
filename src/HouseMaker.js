@@ -42,6 +42,7 @@ class Walker {
 		this.steps = {};
 		this.x = 0;
 		this.y = 0;
+		this.iter = 0;
 	}
 
 	move() {
@@ -79,7 +80,10 @@ class Walker {
 
 	step(n, i = 0) {
 
-		if (i === n) return;
+		if (i === n) return true; // successfully completed
+
+		// if iterations = 4, that means the Walker stepped into itself
+		if (this.iter === 4) return false; // unsuccessfully completed
 
 		if (i === 0) {
 			this.steps[hash(0, 0)] = new Step(0, 0); // always initialize at 0,0
@@ -91,10 +95,16 @@ class Walker {
 		const s = new Step(this.x + m.x, this.y + m.y);
 
 		for (let j = 0; j < this.getSteps().length; j++) {
-			if (this.getSteps()[j].equals(s)) return this.step(n, i); // try again
+			if (this.getSteps()[j].equals(s)) {
+				this.iter++; // update iteration
+				return this.step(n, i); // try again
+			}
 		}
 
 		this.addStep(s);
+
+		// reset iteration
+		this.iter = 0;
 
 		// update position
 		this.x += m.x;
@@ -141,12 +151,11 @@ export default class HouseMaker {
 	// returns a mesh ready to be place in scene
 	make() {
 
-		console.log('making house w seed', this.seed)
-
 		rand.seed(this.seed);
 
 		const w = new Walker();
-		w.step(this.size);
+		const stepped = w.step(this.size);
+		if (!stepped) console.warn("Walker failed at seed", this.seed, "size", this.size);
 
 		const group = new THREE.Group();
 		const material = new THREE.MeshLambertMaterial({ color: 0xffffff });
