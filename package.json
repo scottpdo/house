@@ -4,9 +4,12 @@
   "private": true,
   "dependencies": {
     "lodash": "^4.17.4",
+    "random-seed": "^0.3.0",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
-    "three": "^0.86.0"
+    "three": "^0.86.0",
+    "three-orbit-controls": "^82.1.0",
+    "zfill": "^0.0.2"
   },
   "devDependencies": {
     "react-scripts": "1.0.10"
